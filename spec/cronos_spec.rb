@@ -54,7 +54,11 @@ describe Cronos::Interval do
     it "should output string interval for multiple times" do
       interval.at(8, 10, 22).to_s.should == ['0 8 * * *', '0 10 * * *', '0 22 * * *']
       interval.at(8.20, 10.30, 22.55).to_s.should == ['20 8 * * *', '30 10 * * *', '55 22 * * *']
+    end
+    
+    it "should output string interval for mixed formats multiple times" do
       interval.at('8:20 am', '10:30', '22:55', '5:15pm').to_s.should == ['20 8 * * *', '30 10 * * *', '55 22 * * *', '15 17 * * *']
+      interval.at(12.30, '3.15 pm', 22, '15:30').to_s.should == ['30 12 * * *', '15 15 * * *', '0 22 * * *', '30 15 * * *']
     end
     
     it "should output hash interval for multiple times" do

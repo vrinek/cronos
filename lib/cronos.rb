@@ -20,6 +20,9 @@ module Cronos
     at('01.30')
     at(14.30)
     at('2pm')
+    at('2:20')
+    at('5:15pm')
+    at(12.30, '3.15 pm', 22, '15:30')
 =end
     def at(*times)
       @hours = []
