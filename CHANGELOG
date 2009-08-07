@@ -1,3 +1,6 @@
+== 0.6.0 2009-08-07
+- added Cronos::Parser with syntax: Cronos::Parser.new(cron_string).now? => true or false
+
 == 0.5.1 2009-08-07
 - will try to combine multiple times eg. at(12, 15, '5:00 pm') will return "0 12,15,17 * * *"
 

@@ -1,6 +1,6 @@
 module Cronos
 
-  VERSION = '0.5.1'
+  VERSION = '0.6.0'
 
   def self.schedule(task)
     TaskInterval.new(task)
@@ -206,7 +206,10 @@ module Cronos
       @dow  = '0,6'
       self
     end
-
+    
+=begin rdoc
+  Returns the rules as a cron string (like the ones used in /etc/crontab)
+=end
     def to_s
       if @hours and @mins and @hours.length == @mins.length and @mins.length > 1
         try_to_combine([@hours, @mins].transpose.collect do |hour, min|
@@ -216,7 +219,10 @@ module Cronos
         cron_string
       end
     end
-
+    
+=begin rdoc
+  Returns the rules as a human-readable hash
+=end
     def to_hash
       if @hours and @mins and @hours.length == @mins.length and @mins.length > 1
         [@hours, @mins].transpose.collect do |hour, min|
@@ -344,10 +350,16 @@ module Cronos
   end
   
   class Parser
+=begin rdoc
+  The cron_string should ideally come from Cronos::Interval#to_s
+=end
     def initialize(cron_string)
       @cron_string = cron_string
     end
     
+=begin rdoc
+  Returns true or false depending if the time matches the cron string given on initialization
+=end
     def now?(time = Time.now)
       min, hour, day, month, wday = @cron_string.split ' '
       
