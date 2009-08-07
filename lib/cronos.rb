@@ -349,6 +349,11 @@ module Cronos
     end
   end
   
+=begin rdoc
+  == Usage:
+    cron = Cronos::Interval.new.at('11pm').on_days(:monday, :tuesday).to_s # => '0 23 * * 1,2'
+    Cronos::Parser.new(cron).now? # => true or false
+=end
   class Parser
 =begin rdoc
   The cron_string should ideally come from Cronos::Interval#to_s
