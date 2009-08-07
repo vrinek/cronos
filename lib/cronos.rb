@@ -349,9 +349,9 @@ module Cronos
     end
     
     def now?(time = Time.now)
-      min, hour, day, month, dow = @cron_string.split ' '
+      min, hour, day, month, wday = @cron_string.split ' '
       
-      [:min, :hour, :day, :month].all? do |period|
+      [:min, :hour, :day, :month, :wday].all? do |period|
         p = eval(period.to_s)
         p == '*' or p.split(',').collect{ |parts|
           if parts[/-/]

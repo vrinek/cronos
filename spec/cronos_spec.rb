@@ -436,17 +436,20 @@ describe Cronos::Parser do
       Cronos::Parser.new("40 * 5 * *").now?(time).should == true
       Cronos::Parser.new("* * * 8 *").now?(time).should == true
       Cronos::Parser.new("* 14 * 8 *").now?(time).should == true
+      Cronos::Parser.new("* 14 * * 3").now?(time).should == true
     end
 
     it "should return true if cron_string is in range" do
       Cronos::Parser.new("* 10-20 * * *").now?(time).should == true
       Cronos::Parser.new("30-50 10-20 * * *").now?(time).should == true
+      Cronos::Parser.new("30-50 * * * 1-5").now?(time).should == true
     end
 
     it "should return true if cron_string matches on a lists" do
       Cronos::Parser.new("20,40 10,14,20 * * *").now?(time).should == true
       Cronos::Parser.new("20,40 * 5,12 * *").now?(time).should == true
       Cronos::Parser.new("20,40 14 5,12 * *").now?(time).should == true
+      Cronos::Parser.new("20,40 * 5,12 * 2,3,6").now?(time).should == true
     end
     
     it "should return false if cron_string does not match some parts" do
@@ -456,21 +459,24 @@ describe Cronos::Parser do
       Cronos::Parser.new("40 * 6 * *").now?(time).should == false
       Cronos::Parser.new("* * * 10 *").now?(time).should == false
       Cronos::Parser.new("* 15 * 8 *").now?(time).should == false
+      Cronos::Parser.new("* 14 * 8 2").now?(time).should == false
     end
 
     it "should return false if cron_string is not in range" do
       Cronos::Parser.new("* 20-25 * * *").now?(time).should == false
       Cronos::Parser.new("10-30 10-20 * * *").now?(time).should == false
+      Cronos::Parser.new("* 10-20 * * 4-5").now?(time).should == false
     end
 
     it "should return false if cron_string does not match on a lists" do
       Cronos::Parser.new("20,40 10,20 * * *").now?(time).should == false
       Cronos::Parser.new("20,35 * 5,12 * *").now?(time).should == false
       Cronos::Parser.new("20,40 14 3,8,12 * *").now?(time).should == false
+      Cronos::Parser.new("20,40 14 5,12 * 0,6").now?(time).should == false
     end
   end
   
   def time
-    @time ||= Time.local(2009, "aug", 5, 14, 40, 23) # day is Wednesday
+    @time ||= Time.local(2009, "aug", 5, 14, 40, 23) # day is Wednesday (3)
   end
 end
