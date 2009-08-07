@@ -24,7 +24,7 @@ module Cronos
     at('5:15pm')
     
     at(12.30, '3.15 pm', 22, '15:30')
-  Note that the above will return an array of cron strings
+  Note that the last one will return an array of cron strings
 =end
     def at(*times)
       @hours = []
