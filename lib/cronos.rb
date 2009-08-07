@@ -12,14 +12,15 @@ module Cronos
     MONTHS = [nil, :jan, :feb, :mar, :apr, :may, :jun, :jul, :aug, :sep, :oct, :nov, :dec]
 
     DAYS = [:sun, :mon, :tue, :wed, :thu, :fri, :sat]
-
-    # Time:
-    #   at(12)
-    #   at(1.30)
-    #   at('01.30')
-    #   at(14.30)
-    #   at('2pm')
-    #
+    
+=begin rdoc
+  Time:
+    at(12)
+    at(1.30)
+    at('01.30')
+    at(14.30)
+    at('2pm')
+=end
     def at(time)
       @hour, @min, meridian = parse_time(time)
 
@@ -33,19 +34,20 @@ module Cronos
       raise "invalid hour value for 'at'" if @hour > 23
       self
     end
-
-    # Repeats an interval:
-    #   every(10).minutes
-    #   every(6).hours
-    #   every(2).months
-    #
-    # or use as an alias for #on or #days
-    #   every(:monday)
-    #   every(:mon, :tues)
-    #   every('Monday'.. 'Wednesday')
-    #   every('February', :march)
-    #   every('Feb'..'June')
-    #
+    
+=begin rdoc
+  Repeats an interval:
+    every(10).minutes
+    every(6).hours
+    every(2).months
+  
+  or use as an alias for #on or #days
+    every(:monday)
+    every(:mon, :tues)
+    every('Monday'.. 'Wednesday')
+    every('February', :march)
+    every('Feb'..'June')
+=end
     def every(*multiple)
       return RepeatInterval.new(multiple.first, self) if multiple.first.is_a?(Fixnum)
 
@@ -57,15 +59,16 @@ module Cronos
         raise "Unknown interval type passed to #every"
       end
     end
-
-    # Days of month:
-    #   on(13)
-    #   on('13th')
-    #   on(13..17)
-    #   on('13th'..'17th')
-    #   on(13...18)
-    #   on_the('13th')
-    #
+    
+=begin rdoc
+  Days of month:
+    on(13)
+    on('13th')
+    on(13..17)
+    on('13th'..'17th')
+    on(13...18)
+    on_the('13th')
+=end
     def on(*args)
       if args.first.is_a?(Range)
         @day = format_range(args.first)
@@ -76,18 +79,19 @@ module Cronos
       self
     end
     alias on_the on
-
-    # Days of the week:
-    #   days(:monday)
-    #   days('Monday')
-    #   days(:mon)
-    #   days(1..3)
-    #   days('mon'..'wed')
-    #   days(1...4)
-    #   on_day(:monday)
-    #   days(:mon, :tues)
-    #   on_days(:mon, :tues)
-    #
+    
+=begin rdoc
+  Days of the week:
+    days(:monday)
+    days('Monday')
+    days(:mon)
+    days(1..3)
+    days('mon'..'wed')
+    days(1...4)
+    on_day(:monday)
+    days(:mon, :tues)
+    on_days(:mon, :tues)
+=end
     def days(*args)
       if args.first.is_a?(Range)
         @dow = format_range(args.first)
@@ -99,18 +103,19 @@ module Cronos
     end
     alias on_days days
     alias on_day days
-
-    # Months:
-    #   of(:january)
-    #   of('January')
-    #   of(:jan)
-    #   of(:jan, :feb, :mar)
-    #   of(1..3)
-    #   of('jan'..'mar')
-    #   of(1...4)
-    #   of_months(1, 2, 3)
-    #   in(:january)
-    #
+    
+=begin rdoc
+  Months:
+    of(:january)
+    of('January')
+    of(:jan)
+    of(:jan, :feb, :mar)
+    of(1..3)
+    of('jan'..'mar')
+    of(1...4)
+    of_months(1, 2, 3)
+    in(:january)
+=end
     def of(*args)
       if args.first.is_a?(Range)
         @month = format_range(args.first)
@@ -245,7 +250,6 @@ module Cronos
     end
 
     class RepeatInterval
-
       def initialize(multiple, interval)
         @multiple, @interval = multiple, interval
       end
@@ -290,7 +294,6 @@ module Cronos
         @intervals
       end
     end
-
   end
 
   class TaskInterval < Interval
