@@ -1,3 +1,6 @@
+== 0.6.2 2009-08-07
+- parser can now handle divisions (*/x) in a cron string
+
 == 0.6.1 2009-08-07
 - fixed README
 

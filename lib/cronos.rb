@@ -1,6 +1,6 @@
 module Cronos
 
-  VERSION = '0.6.1'
+  VERSION = '0.6.2'
 
   def self.schedule(task)
     TaskInterval.new(task)
@@ -370,14 +370,18 @@ module Cronos
       
       [:min, :hour, :day, :month, :wday].all? do |period|
         p = eval(period.to_s)
-        p == '*' or p.split(',').collect{ |parts|
+        now = eval("time.#{period}")
+        p.gsub! /\*/, now.to_s
+        
+        p.split(',').collect{ |parts|
           if parts[/-/]
-            first, last = parts.split '-'
-            (first..last).to_a
+            eval(parts.gsub(/-/, '..')).to_a.include? now
+          elsif parts[/\//]
+            eval(parts.gsub(/\//, '%')).zero?
           else
-            parts
+            parts.to_s == now.to_s
           end
-        }.flatten.include? eval("time.#{period}").to_s
+        }.flatten.include? true
       end
     end
   end

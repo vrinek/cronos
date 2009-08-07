@@ -452,6 +452,13 @@ describe Cronos::Parser do
       Cronos::Parser.new("20,40 * 5,12 * 2,3,6").now?(time).should == true
     end
     
+    it "should return true if cron_string matches a division" do
+      Cronos::Parser.new("*/20 * * * *").now?(time).should == true
+      Cronos::Parser.new("40 */7 * * *").now?(time).should == true
+      Cronos::Parser.new("*/20 14 */5 * *").now?(time).should == true
+      Cronos::Parser.new("*/20 14 */6,5 * *").now?(time).should == true
+    end
+    
     it "should return false if cron_string does not match some parts" do
       Cronos::Parser.new("* 15 * * *").now?(time).should == false
       Cronos::Parser.new("45 14 * * *").now?(time).should == false
@@ -473,6 +480,12 @@ describe Cronos::Parser do
       Cronos::Parser.new("20,35 * 5,12 * *").now?(time).should == false
       Cronos::Parser.new("20,40 14 3,8,12 * *").now?(time).should == false
       Cronos::Parser.new("20,40 14 5,12 * 0,6").now?(time).should == false
+    end
+    
+    it "should return false if cron_string matches a division" do
+      Cronos::Parser.new("*/30 * * * *").now?(time).should == false
+      Cronos::Parser.new("40 */5 * * *").now?(time).should == false
+      Cronos::Parser.new("*/20 14 */6 * *").now?(time).should == false
     end
   end
   
