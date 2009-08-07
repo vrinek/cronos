@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
+require 'activesupport'
+
 describe Cronos do
 
   it "should return task interval instance from schedule method" do
@@ -418,4 +420,37 @@ describe Cronos::TaskInterval do
     Cronos::TaskInterval.new('ls').at('12pm').to_s.should == '0 12 * * * ls'
   end
 
+end
+
+describe Cronos::Parser do
+  describe '#now?' do
+    it "should return true if cron_string is all stars" do
+      Cronos::Parser.new("* * * * *").now?(time).should == true
+      Cronos::Parser.new("* * * * *").now?.should == true
+    end
+
+    it "should return true if cron_string matches parts and rest is stars" do
+      Cronos::Parser.new("* 14 * * *").now?(time).should == true
+      Cronos::Parser.new("40 14 * * *").now?(time).should == true
+      Cronos::Parser.new("40 * * * *").now?(time).should == true
+      Cronos::Parser.new("40 * 5 * *").now?(time).should == true
+      Cronos::Parser.new("* * * 8 *").now?(time).should == true
+      Cronos::Parser.new("* 14 * 8 *").now?(time).should == true
+    end
+
+    it "should return true if cron_string is in range" do
+      Cronos::Parser.new("* 10-20 * * *").now?(time).should == true
+      Cronos::Parser.new("30-50 10-20 * * *").now?(time).should == true
+    end
+
+    it "should return true if cron_string matches on a lists" do
+      Cronos::Parser.new("20,40 10,14,20 * * *").now?(time).should == true
+      Cronos::Parser.new("20,40 * 5,12 * *").now?(time).should == true
+      Cronos::Parser.new("20,40 14 5,12 * *").now?(time).should == true
+    end
+  end
+  
+  def time
+    @time ||= Time.local(2009, "aug", 5, 14, 40, 23)
+  end
 end

@@ -342,7 +342,29 @@ module Cronos
       end
     end
   end
-
+  
+  class Parser
+    def initialize(cron_string)
+      @cron_string = cron_string
+    end
+    
+    def now?(time = Time.now)
+      min, hour, day, month, dow = @cron_string.split ' '
+      
+      [:min, :hour, :day, :month].all? do |period|
+        p = eval(period.to_s)
+        p == '*' or p.split(',').collect{ |parts|
+          if parts[/-/]
+            first, last = parts.split '-'
+            (first..last).to_a
+          else
+            parts
+          end
+        }.flatten.include? eval("time.#{period}").to_s
+      end
+    end
+  end
+  
   class TaskInterval < Interval
     attr_accessor :task
 
