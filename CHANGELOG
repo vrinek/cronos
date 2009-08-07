@@ -1,3 +1,6 @@
+== 0.6.1 2009-08-07
+- fixed README
+
 == 0.6.0 2009-08-07
 - added Cronos::Parser with syntax: Cronos::Parser.new(cron_string).now? => true or false
 
