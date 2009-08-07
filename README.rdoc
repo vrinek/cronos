@@ -74,6 +74,7 @@ is a strange combination anyway, the result is the union of both and not the int
 == Credits
 
 Adam Meehan (http://duckpunching.com, adam.meehan@gmail.com)
+Kostas Karachalios (kostas.karachalios@gmail.com)
 
 
 == License

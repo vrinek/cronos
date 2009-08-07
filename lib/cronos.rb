@@ -1,6 +1,6 @@
 module Cronos
 
-  VERSION = '0.5.0'
+  VERSION = '0.5.1'
 
   def self.schedule(task)
     TaskInterval.new(task)
@@ -22,7 +22,9 @@ module Cronos
     at('2pm')
     at('2:20')
     at('5:15pm')
+    
     at(12.30, '3.15 pm', 22, '15:30')
+  Note that the above will return an array of cron strings
 =end
     def at(*times)
       @hours = []
@@ -207,9 +209,9 @@ module Cronos
 
     def to_s
       if @hours and @mins and @hours.length == @mins.length and @mins.length > 1
-        [@hours, @mins].transpose.collect do |hour, min|
+        try_to_combine([@hours, @mins].transpose.collect do |hour, min|
           cron_string hour, min
-        end
+        end)
       else
         cron_string
       end
@@ -226,6 +228,16 @@ module Cronos
     end
 
     private
+    
+    def try_to_combine(cron_strings)
+      if (multiples = cron_strings.collect{ |str| str.split ' '}.transpose).select{ |a| a.uniq.length > 1}.length > 1
+        return cron_strings # no can do
+      elsif cron_strings.uniq.length == 1
+        cron_strings.first
+      else
+        multiples.collect{|a| a.uniq.join ","}.join ' '
+      end
+    end
     
     def cron_string(hour = nil, min = nil)
       "#{min || @min || '*'} #{hour || @hour || '*'} #{day || '*'} #{month || '*'} #{dow || '*'}"

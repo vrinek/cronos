@@ -1,3 +1,6 @@
+== 0.5.1 2009-08-07
+- will try to combine multiple times eg. at(12, 15, '5:00 pm') will return "0 12,15,17 * * *"
+
 == 0.5.0 2009-08-07
 - can now use multiple times eg. at(12.30, 15.15, '5.20 pm')
 
