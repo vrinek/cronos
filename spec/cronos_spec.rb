@@ -448,9 +448,29 @@ describe Cronos::Parser do
       Cronos::Parser.new("20,40 * 5,12 * *").now?(time).should == true
       Cronos::Parser.new("20,40 14 5,12 * *").now?(time).should == true
     end
+    
+    it "should return false if cron_string does not match some parts" do
+      Cronos::Parser.new("* 15 * * *").now?(time).should == false
+      Cronos::Parser.new("45 14 * * *").now?(time).should == false
+      Cronos::Parser.new("30 * * * *").now?(time).should == false
+      Cronos::Parser.new("40 * 6 * *").now?(time).should == false
+      Cronos::Parser.new("* * * 10 *").now?(time).should == false
+      Cronos::Parser.new("* 15 * 8 *").now?(time).should == false
+    end
+
+    it "should return false if cron_string is not in range" do
+      Cronos::Parser.new("* 20-25 * * *").now?(time).should == false
+      Cronos::Parser.new("10-30 10-20 * * *").now?(time).should == false
+    end
+
+    it "should return false if cron_string does not match on a lists" do
+      Cronos::Parser.new("20,40 10,20 * * *").now?(time).should == false
+      Cronos::Parser.new("20,35 * 5,12 * *").now?(time).should == false
+      Cronos::Parser.new("20,40 14 3,8,12 * *").now?(time).should == false
+    end
   end
   
   def time
-    @time ||= Time.local(2009, "aug", 5, 14, 40, 23)
+    @time ||= Time.local(2009, "aug", 5, 14, 40, 23) # day is Wednesday
   end
 end
