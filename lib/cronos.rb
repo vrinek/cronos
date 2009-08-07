@@ -21,17 +21,29 @@ module Cronos
     at(14.30)
     at('2pm')
 =end
-    def at(time)
-      @hour, @min, meridian = parse_time(time)
+    def at(*times)
+      @hours = []
+      @mins = []
+      
+      times.each do |time|
+        @hour, @min, meridian = parse_time(time)
 
-      raise "invalid hour value for 'at'" if @hour > 12 && meridian
-      raise "invalid minute value for 'at'" if @min > 59
-        
-      case meridian
-        when 'am': @hour = 0 if @hour == 12 
-        when 'pm': @hour += 12 if @hour < 12
+        raise "invalid hour value for 'at'" if @hour > 12 && meridian
+        raise "invalid minute value for 'at'" if @min > 59
+
+        case meridian
+        when 'am'
+          @hour = 0 if @hour == 12 
+        when 'pm'
+          @hour += 12 if @hour < 12
+        end
+
+        raise "invalid hour value for 'at'" if @hour > 23
+
+        @hours << @hour
+        @mins << @min
       end
-      raise "invalid hour value for 'at'" if @hour > 23
+      
       self
     end
     
@@ -191,24 +203,44 @@ module Cronos
     end
 
     def to_s
-      "#{min || '*'} #{hour || '*'} #{day || '*'} #{month || '*'} #{dow || '*'}"
+      if @hours and @mins and @hours.length == @mins.length and @mins.length > 1
+        [@hours, @mins].transpose.collect do |hour, min|
+          cron_string hour, min
+        end
+      else
+        cron_string
+      end
     end
 
     def to_hash
+      if @hours and @mins and @hours.length == @mins.length and @mins.length > 1
+        [@hours, @mins].transpose.collect do |hour, min|
+          cron_hash hour, min
+        end
+      else
+        cron_hash
+      end
+    end
+
+    private
+    
+    def cron_string(hour = nil, min = nil)
+      "#{min || @min || '*'} #{hour || @hour || '*'} #{day || '*'} #{month || '*'} #{dow || '*'}"
+    end
+    
+    def cron_hash(hour = nil, min = nil)
       {
-        :minute  => "#{min   || '*'}",
-        :hour    => "#{hour  || '*'}",
+        :minute  => "#{min   || @min  || '*'}",
+        :hour    => "#{hour  || @hour || '*'}",
         :day     => "#{day   || '*'}",
         :month   => "#{month || '*'}",
         :weekday => "#{dow   || '*'}"
       }
     end
-
-    private
-
+    
     def parse_time(time)
       meridian = /pm|am/i.match(time.to_s)[0].downcase rescue nil
-      hour, min = *time.to_s.split('.')
+      hour, min = *time.to_s.split(/[\.:]/)
 
       hour = hour.to_i
       min = min.strip.ljust(2, '0').to_i if min
@@ -307,5 +339,4 @@ module Cronos
       "#{super} #{@task}"
     end
   end
-
 end

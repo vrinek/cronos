@@ -50,6 +50,58 @@ describe Cronos::Interval do
     it "should raise error if minutes out of range" do
       lambda { interval.daily.at('23.60') }.should raise_error
     end
+    
+    it "should output string interval for multiple times" do
+      interval.at(8, 10, 22).to_s.should == ['0 8 * * *', '0 10 * * *', '0 22 * * *']
+      interval.at(8.20, 10.30, 22.55).to_s.should == ['20 8 * * *', '30 10 * * *', '55 22 * * *']
+      interval.at('8:20 am', '10:30', '22:55', '5:15pm').to_s.should == ['20 8 * * *', '30 10 * * *', '55 22 * * *', '15 17 * * *']
+    end
+    
+    it "should output hash interval for multiple times" do
+      interval.at(8, 10, 22).to_hash.should == [
+        {
+          :minute  => "0",
+          :hour    => "8",
+          :day     => "*",
+          :month   => "*",
+          :weekday => "*"
+        }, {
+          :minute  => "0",
+          :hour    => "10",
+          :day     => "*",
+          :month   => "*",
+          :weekday => "*"
+        }, {
+          :minute  => "0",
+          :hour    => "22",
+          :day     => "*",
+          :month   => "*",
+          :weekday => "*"
+        }
+      ]
+
+      interval.at(8.20, 10.30, 22.55).to_hash.should == [
+        {
+          :minute  => "20",
+          :hour    => "8",
+          :day     => "*",
+          :month   => "*",
+          :weekday => "*"
+        }, {
+          :minute  => "30",
+          :hour    => "10",
+          :day     => "*",
+          :month   => "*",
+          :weekday => "*"
+        }, {
+          :minute  => "55",
+          :hour    => "22",
+          :day     => "*",
+          :month   => "*",
+          :weekday => "*"
+        }
+      ]
+    end
   end
   
   describe "on method" do
